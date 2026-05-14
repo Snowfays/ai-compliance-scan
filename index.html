@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Compliance Scan — Gratis tool voor KMO's</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f7f4;color:#1a1a1a;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem}
+#app{width:100%;max-width:660px}
+.scan-badge{display:inline-block;background:#E6F1FB;color:#0C447C;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;margin-bottom:10px;letter-spacing:0.04em}
+.scan-title{font-size:26px;font-weight:600;color:#1a1a1a;margin-bottom:8px}
+.scan-sub{font-size:15px;color:#555;line-height:1.6;margin-bottom:2rem}
+.progress-wrap{margin-bottom:1.5rem}
+.progress-bar-bg{background:#e8e6e0;border-radius:99px;height:4px;margin-bottom:6px}
+.progress-bar{height:4px;border-radius:99px;background:#185FA5;transition:width 0.4s ease}
+.progress-label{font-size:12px;color:#888}
+.block-label{font-size:11px;font-weight:600;color:#888;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:1rem}
+.question-card{background:#fff;border:1px solid #e8e6e0;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
+.question-text{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:0.875rem;line-height:1.5}
+.multi-note{font-size:12px;color:#888;margin-bottom:8px}
+.option-grid{display:flex;flex-direction:column;gap:6px}
+.option-btn{background:#f8f7f4;border:1px solid #e8e6e0;border-radius:8px;padding:10px 14px;font-size:14px;color:#1a1a1a;cursor:pointer;text-align:left;transition:all 0.15s}
+.option-btn:hover{border-color:#aaa;background:#f0eeea}
+.option-btn.selected{border-color:#185FA5;background:#E6F1FB;color:#0C447C;font-weight:500}
+.nav-row{display:flex;gap:10px;margin-top:1.5rem;align-items:center}
+.btn-primary{background:#185FA5;color:#fff;border:none;border-radius:8px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.15s}
+.btn-primary:hover{opacity:0.88}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed}
+.btn-secondary{background:transparent;border:1px solid #ccc;border-radius:8px;padding:11px 18px;font-size:14px;color:#666;cursor:pointer}
+.btn-secondary:hover{background:#f0eeea}
+.email-card{background:#fff;border:1px solid #e8e6e0;border-radius:12px;padding:1.5rem}
+.email-card h3{font-size:18px;font-weight:600;margin-bottom:6px}
+.email-card p{font-size:14px;color:#555;margin-bottom:1rem;line-height:1.6}
+.score-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
+.score-chip{border-radius:8px;padding:12px;text-align:center}
+.chip-label{font-size:11px;font-weight:600;margin-bottom:4px}
+.chip-val{font-size:16px;font-weight:600}
+.chip-green{background:#EAF3DE;color:#3B6D11}
+.chip-amber{background:#FAEEDA;color:#854F0B}
+.chip-red{background:#FCEBEB;color:#A32D2D}
+.email-input-row{display:flex;gap:8px}
+.email-input-row input{flex:1;padding:10px 14px;border:1px solid #ccc;border-radius:8px;font-size:14px;background:#f8f7f4;color:#1a1a1a}
+.email-input-row input:focus{outline:none;border-color:#185FA5}
+.privacy-note{font-size:12px;color:#888;margin-top:8px}
+.error-msg{background:#FCEBEB;color:#A32D2D;border-radius:8px;padding:10px 14px;font-size:13px;margin-top:10px}
+.loading-wrap{padding:3rem 0;text-align:center}
+.spinner{width:36px;height:36px;border:2px solid #e8e6e0;border-top-color:#185FA5;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-msg{font-size:14px;color:#666}
+.report-section{margin-bottom:1.5rem}
+.report-section-header{display:flex;align-items:center;gap:10px;margin-bottom:0.75rem}
+.rs-title{font-size:15px;font-weight:600}
+.risk-badge{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px}
+.risk-laag{background:#EAF3DE;color:#3B6D11}
+.risk-middel{background:#FAEEDA;color:#854F0B}
+.risk-hoog{background:#FCEBEB;color:#A32D2D}
+.report-card{background:#fff;border:1px solid #e8e6e0;border-radius:12px;padding:1.25rem}
+.report-card p{font-size:14px;color:#444;line-height:1.7;margin-bottom:0.75rem}
+.report-card ul{padding-left:1.25rem}
+.report-card ul li{font-size:14px;color:#444;line-height:1.7;margin-bottom:4px}
+.cta-card{background:#E6F1FB;border:1px solid #B5D4F4;border-radius:12px;padding:1.25rem;margin-top:1.5rem}
+.cta-card h3{font-size:15px;font-weight:600;color:#0C447C;margin-bottom:6px}
+.cta-card p{font-size:13px;color:#185FA5;margin-bottom:0.75rem}
+.cta-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cta-tier{background:#fff;border:1px solid #e8e6e0;border-radius:8px;padding:10px 12px}
+.tier-name{font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:2px}
+.tier-price{font-size:17px;font-weight:700;color:#185FA5}
+.tier-desc{font-size:11px;color:#888;margin-top:4px;line-height:1.5}
+.disclaimer{font-size:11px;color:#999;margin-top:1.5rem;border-top:1px solid #e8e6e0;padding-top:1rem;line-height:1.6}
+.report-header{margin-bottom:1.5rem}
+.report-header h2{font-size:20px;font-weight:600;margin-bottom:4px}
+.report-header p{font-size:14px;color:#666}
+</style>
+</head>
+<body>
+<div id="app"><div id="screen"></div></div>
+<script>
+const QUESTIONS=[
+  {id:'sector',block:1,blockName:'Jouw bedrijf',text:'In welke sector is jouw bedrijf actief?',type:'single',options:['Retail','Horeca','Bouw','Zorg','HR & Recruitment','Financiën & Verzekeringen','Transport & Logistiek','IT & Technologie','Juridisch & Advies','Overheid','Onderwijs','Andere']},
+  {id:'size',block:1,text:'Hoeveel medewerkers heeft jouw bedrijf?',type:'single',options:['1 (solo)','2–9','10–49','50–249','250+']},
+  {id:'tools',block:1,text:'Welke AI tools gebruikt jouw bedrijf? Selecteer alles wat van toepassing is.',type:'multi',options:['ChatGPT','Microsoft Copilot','Google Gemini','AI voor recruitment of HR','AI chatbot op website','AI voor boekhouding of financiën','AI voor marketing of content','Andere AI tools','Geen AI tools']},
+  {id:'usage',block:1,text:'Waarvoor gebruik je deze AI tools voornamelijk?',type:'multi',options:['Teksten schrijven','Klantenservice','Beslissingen over medewerkers','Beslissingen over klanten','Data-analyse','Automatisering van processen','Andere']},
+  {id:'personal_data',block:2,blockName:'Jouw data',text:'Verwerken jouw AI tools persoonsgegevens?',type:'single',options:['Ja','Nee','Weet ik niet']},
+  {id:'data_from',block:2,text:'Van wie verwerkt jouw bedrijf persoonsgegevens via AI?',type:'multi',options:['Klanten','Medewerkers','Sollicitanten','Leveranciers','Anderen','Niemand']},
+  {id:'privacy',block:2,text:'Heeft jouw bedrijf een privacybeleid en een register van verwerkingsactiviteiten?',type:'single',options:['Ja, beide','Alleen privacybeleid','Geen van beide','Weet ik niet']},
+  {id:'data_share',block:2,text:'Deelt jouw bedrijf data met externe AI platformen zoals OpenAI, Google of Microsoft?',type:'single',options:['Ja','Nee','Weet ik niet']},
+  {id:'nis2_sector',block:3,blockName:'Jouw beveiliging',text:'Werkt jouw bedrijf samen met of levert het diensten aan één van deze sectoren?',type:'multi',options:['Overheid','Zorg & Ziekenhuizen','Energie','Transport','Financiën & Banken','Drinkwater','Digitale infrastructuur','Geen van deze']},
+  {id:'cyber',block:3,text:'Heeft jouw bedrijf een procedure als er een cyberaanval of datalek plaatsvindt?',type:'single',options:['Ja, gedocumenteerd','Informeel ja','Nee','Weet ik niet']},
+  {id:'auto_decisions',block:3,text:'Neemt jouw bedrijf geautomatiseerde beslissingen over mensen via AI — zoals bij aanwerving, krediet of prestatiebeoordeling?',type:'single',options:['Ja','Nee','Weet ik niet']},
+  {id:'chatbot',block:3,text:'Heeft jouw bedrijf een chatbot of AI-systeem dat communiceert met klanten of bezoekers?',type:'single',options:['Ja, klanten weten dat het AI is','Ja, maar klanten weten het niet','Nee']}
+];
+
+let S={step:0,answers:{},email:'',report:null,loading:false,error:null};
+
+function sel(q){const a=S.answers[q.id];return a||(q.type==='multi'?[]:null)}
+
+function toggle(qid,val,multi){
+  if(multi){let a=S.answers[qid]||[];S.answers[qid]=a.includes(val)?a.filter(v=>v!==val):[...a,val]}
+  else S.answers[qid]=val;
+  render();
+}
+
+function canGo(){const q=QUESTIONS[S.step];const a=S.answers[q.id];return q.type==='multi'?a&&a.length>0:!!a}
+
+function scores(){
+  const a=S.answers;let ai=0,gdpr=0,nis2=0;
+  if((a.tools||[]).some(t=>t!=='Geen AI tools'))ai++;
+  if((a.usage||[]).some(u=>['Beslissingen over medewerkers','Beslissingen over klanten'].includes(u)))ai++;
+  if(a.auto_decisions==='Ja')ai++;
+  if(a.chatbot==='Ja, maar klanten weten het niet')ai++;
+  if(a.personal_data==='Ja'||a.personal_data==='Weet ik niet')gdpr++;
+  if(a.privacy==='Geen van beide'||a.privacy==='Weet ik niet')gdpr++;
+  if(a.data_share==='Ja'||a.data_share==='Weet ik niet')gdpr++;
+  if((a.data_from||[]).some(d=>['Medewerkers','Sollicitanten'].includes(d)))gdpr++;
+  if(!(a.nis2_sector||[]).includes('Geen van deze'))nis2++;
+  if(a.cyber==='Nee'||a.cyber==='Weet ik niet')nis2++;
+  const l=s=>s<=1?'laag':s<=2?'middel':'hoog';
+  return{ai:l(ai),gdpr:l(gdpr),nis2:l(nis2)};
+}
+
+function chipClass(r){return r==='laag'?'chip-green':r==='middel'?'chip-amber':'chip-red'}
+function riskClass(r){return r==='laag'?'risk-laag':r==='middel'?'risk-middel':'risk-hoog'}
+function riskLabel(r){return r==='laag'?'Laag risico':r==='middel'?'Middel risico':'Hoog risico'}
+
+function renderQ(){
+  const q=QUESTIONS[S.step];
+  const prog=Math.round((S.step/QUESTIONS.length)*100);
+  const blockChanged=S.step===0||q.block!==QUESTIONS[S.step-1].block;
+  const s=sel(q);
+  return`
+    ${S.step===0?`<div style="margin-bottom:2rem">
+      <div class="scan-badge">✦ gratis scan</div>
+      <h1 class="scan-title">AI Compliance Scan</h1>
+      <p class="scan-sub">Controleer in 2 minuten of jouw bedrijf voldoet aan de EU AI Act, GDPR en NIS2 — voor de deadline van augustus 2026.</p>
+    </div>`:''}
+    <div class="progress-wrap">
+      <div class="progress-bar-bg"><div class="progress-bar" style="width:${prog}%"></div></div>
+      <p class="progress-label">Vraag ${S.step+1} van ${QUESTIONS.length}</p>
+    </div>
+    ${blockChanged?`<p class="block-label">Blok ${q.block} — ${q.blockName}</p>`:''}
+    <div class="question-card">
+      <p class="question-text">${q.text}</p>
+      ${q.type==='multi'?'<p class="multi-note">Meerdere antwoorden mogelijk</p>':''}
+      <div class="option-grid">
+        ${q.options.map(o=>`<button class="option-btn${q.type==='multi'?(s||[]).includes(o)?' selected':'':s===o?' selected':''}" onclick="toggle('${q.id}','${o.replace(/'/g,"\\'")}',${q.type==='multi'})">${q.type==='multi'?`<span style="margin-right:8px">${(s||[]).includes(o)?'☑':'☐'}</span>`:''} ${o}</button>`).join('')}
+      </div>
+    </div>
+    <div class="nav-row">
+      ${S.step>0?`<button class="btn-secondary" onclick="back()">← Terug</button>`:''}
+      <button class="btn-primary" onclick="next()" ${canGo()?'':'disabled'}>${S.step===QUESTIONS.length-1?'Resultaten bekijken →':'Volgende →'}</button>
+    </div>`;
+}
+
+function renderEmail(){
+  const sc=scores();
+  return`
+    <div class="progress-wrap">
+      <div class="progress-bar-bg"><div class="progress-bar" style="width:95%"></div></div>
+      <p class="progress-label">Bijna klaar</p>
+    </div>
+    <div class="email-card">
+      <h3>Jouw eerste scan-resultaten</h3>
+      <p>Dit is een voorvertoning. Vul je e-mailadres in om het volledige rapport met actiepunten te ontvangen.</p>
+      <div class="score-preview">
+        <div class="score-chip ${chipClass(sc.ai)}"><div class="chip-label">EU AI Act</div><div class="chip-val">${riskLabel(sc.ai)}</div></div>
+        <div class="score-chip ${chipClass(sc.gdpr)}"><div class="chip-label">GDPR</div><div class="chip-val">${riskLabel(sc.gdpr)}</div></div>
+        <div class="score-chip ${chipClass(sc.nis2)}"><div class="chip-label">NIS2</div><div class="chip-val">${riskLabel(sc.nis2)}</div></div>
+      </div>
+      <div class="email-input-row">
+        <input type="email" id="em" placeholder="jouw@email.be" value="${S.email}" oninput="S.email=this.value" />
+        <button class="btn-primary" onclick="submitEmail()">Volledig rapport →</button>
+      </div>
+      <p class="privacy-note">🔒 Jouw gegevens worden niet gedeeld met derden.</p>
+      ${S.error?`<div class="error-msg">${S.error}</div>`:''}
+    </div>
+    <div class="nav-row"><button class="btn-secondary" onclick="back()">← Terug</button></div>`;
+}
+
+function renderLoading(){
+  return`<div class="loading-wrap"><div class="spinner"></div><p class="loading-msg">Jouw rapport wordt gegenereerd met actuele wetgeving...</p></div>`;
+}
+
+function renderReport(){
+  const r=S.report;
+  const sc={ai:r.ai_risk,gdpr:r.gdpr_risk,nis2:r.nis2_risk};
+  const sections=[
+    {key:'ai',title:'EU AI Act',data:r.ai_section},
+    {key:'gdpr',title:'GDPR',data:r.gdpr_section},
+    {key:'nis2',title:'NIS2',data:r.nis2_section}
+  ];
+  return`
+    <div class="progress-wrap">
+      <div class="progress-bar-bg"><div class="progress-bar" style="width:100%"></div></div>
+    </div>
+    <div class="report-header">
+      <h2>Jouw compliance rapport</h2>
+      <p>Gegenereerd op basis van actuele EU wetgeving — ${new Date().toLocaleDateString('nl-BE')}</p>
+    </div>
+    <div class="score-preview" style="margin-bottom:1.5rem">
+      <div class="score-chip ${chipClass(sc.ai)}"><div class="chip-label">EU AI Act</div><div class="chip-val">${riskLabel(sc.ai)}</div></div>
+      <div class="score-chip ${chipClass(sc.gdpr)}"><div class="chip-label">GDPR</div><div class="chip-val">${riskLabel(sc.gdpr)}</div></div>
+      <div class="score-chip ${chipClass(sc.nis2)}"><div class="chip-label">NIS2</div><div class="chip-val">${riskLabel(sc.nis2)}</div></div>
+    </div>
+    ${sections.map(s=>`
+      <div class="report-section">
+        <div class="report-section-header">
+          <span class="rs-title">${s.title}</span>
+          <span class="risk-badge ${riskClass(sc[s.key])}">${riskLabel(sc[s.key])}</span>
+        </div>
+        <div class="report-card">
+          <p>${s.data?.summary||''}</p>
+          ${s.data?.actions?.length?`<ul>${s.data.actions.map(a=>`<li>${a}</li>`).join('')}</ul>`:''}
+        </div>
+      </div>`).join('')}
+    <div class="cta-card">
+      <h3>Wil je dieper gaan?</h3>
+      <p>Kies een pakket voor een uitgebreidere analyse en persoonlijke begeleiding.</p>
+      <div class="cta-tiers">
+        <div class="cta-tier"><div class="tier-name">Professional</div><div class="tier-price">€149</div><div class="tier-desc">Uitgebreid rapport + actieplan</div></div>
+        <div class="cta-tier"><div class="tier-name">Enterprise</div><div class="tier-price">€499</div><div class="tier-desc">Volledige audit GDPR + AI Act</div></div>
+        <div class="cta-tier"><div class="tier-name">Monitoring</div><div class="tier-price">€99/mnd</div><div class="tier-desc">Maandelijkse hercheck + alerts</div></div>
+      </div>
+    </div>
+    <p class="disclaimer">Dit rapport is informatief en vormt geen juridisch advies. De wetgeving evolueert — raadpleeg een juridisch adviseur voor bindende beslissingen.</p>`;
+}
+
+function render(){
+  const el=document.getElementById('screen');
+  if(S.loading){el.innerHTML=renderLoading();return}
+  if(S.report){el.innerHTML=renderReport();return}
+  if(S.step>=QUESTIONS.length){el.innerHTML=renderEmail();return}
+  el.innerHTML=renderQ();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function next(){if(!canGo())return;S.step++;render()}
+function back(){if(S.step>0){S.step--;render()}}
+
+async function submitEmail(){
+  const email=S.email.trim();
+  if(!email||!email.includes('@')){S.error='Vul een geldig e-mailadres in.';render();return}
+  S.error=null;S.loading=true;render();
+  try{
+    const answersText=QUESTIONS.map(q=>{
+      const a=S.answers[q.id];
+      return`${q.text}\nAntwoord: ${Array.isArray(a)?a.join(', '):(a||'Geen antwoord')}`;
+    }).join('\n\n');
+
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        tools:[{type:'web_search_20250305',name:'web_search'}],
+        system:`Je bent een AI compliance expert gespecialiseerd in EU AI Act, GDPR en NIS2 voor Belgische en Europese KMO's. Analyseer de antwoorden en geef een compliance rapport. Geef ALLEEN een geldig JSON object terug zonder markdown, backticks of uitleg. Exact dit formaat: {"ai_risk":"laag|middel|hoog","gdpr_risk":"laag|middel|hoog","nis2_risk":"laag|middel|hoog","ai_section":{"summary":"2-3 zinnen","actions":["actie 1","actie 2","actie 3"]},"gdpr_section":{"summary":"2-3 zinnen","actions":["actie 1","actie 2","actie 3"]},"nis2_section":{"summary":"2-3 zinnen","actions":["actie 1","actie 2"]}}. Schrijf in het Nederlands. Houd rekening met de deadline van 2 augustus 2026 voor de EU AI Act.`,
+        messages:[{role:'user',content:`Analyseer dit bedrijf:\n\n${answersText}\n\nGenereer het compliance rapport als JSON.`}]
+      })
+    });
+
+    const data=await res.json();
+    let report=null;
+    for(const b of(data.content||[])){
+      if(b.type==='text'&&b.text){
+        try{
+          const clean=b.text.replace(/```json|```/g,'').trim();
+          const p=JSON.parse(clean);
+          if(p.ai_risk){report=p;break}
+        }catch(e){}
+      }
+    }
+    if(!report){
+      const txt=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+      const m=txt.match(/\{[\s\S]*"ai_risk"[\s\S]*\}/);
+      if(m)try{report=JSON.parse(m[0])}catch(e){}
+    }
+    if(!report)throw new Error('Rapport niet gegenereerd');
+    S.report=report;S.loading=false;render();
+  }catch(err){
+    S.loading=false;S.error='Er is iets misgegaan. Probeer opnieuw.';S.step=QUESTIONS.length;render();
+  }
+}
+
+render();
+</script>
+</body>
+</html>
