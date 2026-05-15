@@ -3,78 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Compliance Scan — Gratis tool voor KMO's</title>
+<title>Adactus — AI Compliance Scan</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&display=swap" rel="stylesheet">
 <style>
+:root{--bg:#080c10;--bg2:#0d1118;--teal:#5DCAA5;--teal-dim:rgba(93,202,165,0.1);--teal-border:rgba(93,202,165,0.2);--amber:#EF9F27;--amber-dim:rgba(239,159,39,0.1);--red:#F09595;--red-dim:rgba(240,149,149,0.1);--white:#e8f4ff;--white-60:rgba(232,244,255,0.6);--white-40:rgba(232,244,255,0.4);--white-20:rgba(232,244,255,0.2);--white-10:rgba(232,244,255,0.1);--white-05:rgba(232,244,255,0.05);--border:rgba(93,202,165,0.12);--border2:rgba(232,244,255,0.06)}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f7f4;color:#1a1a1a;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem}
-#app{width:100%;max-width:660px}
-.scan-badge{display:inline-block;background:#E6F1FB;color:#0C447C;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;margin-bottom:10px;letter-spacing:0.04em}
-.scan-title{font-size:26px;font-weight:600;color:#1a1a1a;margin-bottom:8px}
-.scan-sub{font-size:15px;color:#555;line-height:1.6;margin-bottom:2rem}
-.progress-wrap{margin-bottom:1.5rem}
-.progress-bar-bg{background:#e8e6e0;border-radius:99px;height:4px;margin-bottom:6px}
-.progress-bar{height:4px;border-radius:99px;background:#185FA5;transition:width 0.4s ease}
-.progress-label{font-size:12px;color:#888}
-.block-label{font-size:11px;font-weight:600;color:#888;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:1rem}
-.question-card{background:#fff;border:1px solid #e8e6e0;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
-.question-text{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:0.875rem;line-height:1.5}
-.multi-note{font-size:12px;color:#888;margin-bottom:8px}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--white);min-height:100vh;display:flex;flex-direction:column;align-items:stretch;padding:0}
+#app{width:100%;max-width:660px;margin:0 auto;padding:1.5rem}
+
+/* NAV */
+.scan-nav{display:flex;align-items:center;justify-content:space-between;padding:12px 1.5rem;border-bottom:1px solid var(--border);background:rgba(8,12,16,0.95);backdrop-filter:blur(12px);position:sticky;top:0;z-index:10;margin:-1.5rem -1.5rem 1.5rem;width:calc(100% + 3rem)}
+.scan-nav-status{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--white-40);letter-spacing:0.04em}
+.nav-pulse{width:5px;height:5px;border-radius:50%;background:var(--teal);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* BADGE & HEADER */
+.scan-badge{display:inline-flex;align-items:center;gap:6px;background:var(--teal-dim);border:1px solid var(--teal-border);color:var(--teal);font-size:10px;font-weight:500;padding:4px 10px;border-radius:4px;margin-bottom:10px;letter-spacing:0.06em;text-transform:uppercase}
+.scan-title{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:-0.01em;margin-bottom:6px;line-height:1.1}
+.scan-sub{font-size:14px;color:var(--white-40);line-height:1.6;margin-bottom:1.5rem;font-weight:300}
+
+/* PROGRESS */
+.progress-wrap{margin-bottom:1.25rem}
+.progress-bar-bg{background:var(--white-05);border-radius:99px;height:2px;margin-bottom:6px}
+.progress-bar{height:2px;border-radius:99px;background:var(--teal);transition:width 0.4s ease}
+.progress-label{font-size:11px;color:var(--white-40)}
+
+/* BLOCK LABEL */
+.block-label{font-size:9px;color:var(--teal);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px;font-weight:500}
+.block-badge{background:var(--teal-dim);border-radius:99px;padding:2px 8px;border:1px solid var(--teal-border)}
+
+/* QUESTION CARD */
+.question-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1rem}
+.question-text{font-size:14px;font-weight:500;color:var(--white);margin-bottom:0.875rem;line-height:1.5}
+.multi-note{font-size:11px;color:var(--white-40);margin-bottom:8px}
 .option-grid{display:flex;flex-direction:column;gap:6px}
-.option-btn{background:#f8f7f4;border:1px solid #e8e6e0;border-radius:8px;padding:10px 14px;font-size:14px;color:#1a1a1a;cursor:pointer;text-align:left;transition:all 0.15s}
-.option-btn:hover{border-color:#aaa;background:#f0eeea}
-.option-btn.selected{border-color:#185FA5;background:#E6F1FB;color:#0C447C;font-weight:500}
-.nav-row{display:flex;gap:10px;margin-top:1.5rem;align-items:center}
-.btn-primary{background:#185FA5;color:#fff;border:none;border-radius:8px;padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.15s}
-.btn-primary:hover{opacity:0.88}
-.btn-primary:disabled{opacity:0.4;cursor:not-allowed}
-.btn-secondary{background:transparent;border:1px solid #ccc;border-radius:8px;padding:11px 18px;font-size:14px;color:#666;cursor:pointer}
-.btn-secondary:hover{background:#f0eeea}
-.email-card{background:#fff;border:1px solid #e8e6e0;border-radius:12px;padding:1.5rem}
-.email-card h3{font-size:18px;font-weight:600;margin-bottom:6px}
-.email-card p{font-size:14px;color:#555;margin-bottom:1rem;line-height:1.6}
-.score-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
-.score-chip{border-radius:8px;padding:12px;text-align:center}
-.chip-label{font-size:11px;font-weight:600;margin-bottom:4px}
-.chip-val{font-size:16px;font-weight:600}
-.chip-green{background:#EAF3DE;color:#3B6D11}
-.chip-amber{background:#FAEEDA;color:#854F0B}
-.chip-red{background:#FCEBEB;color:#A32D2D}
+.option-btn{background:var(--white-05);border:1px solid var(--border2);border-radius:6px;padding:10px 14px;font-size:13px;color:var(--white-60);cursor:pointer;text-align:left;transition:all 0.15s;font-family:'DM Sans',sans-serif}
+.option-btn:hover{border-color:rgba(93,202,165,0.3);color:var(--teal)}
+.option-btn.selected{border-color:var(--teal);background:var(--teal-dim);color:var(--teal)}
+
+/* NAV BUTTONS */
+.nav-row{display:flex;gap:10px;margin-top:1.25rem;align-items:center}
+.btn-primary{background:var(--teal);color:var(--bg);border:none;border-radius:4px;padding:10px 20px;font-size:12px;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:opacity 0.15s}
+.btn-primary:hover{opacity:0.85}
+.btn-primary:disabled{opacity:0.35;cursor:not-allowed}
+.btn-secondary{background:transparent;border:1px solid var(--border2);border-radius:4px;padding:10px 14px;font-size:12px;color:var(--white-40);cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-secondary:hover{border-color:var(--teal-border);color:var(--teal)}
+
+/* EMAIL CARD */
+.email-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.5rem}
+.email-card h3{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px}
+.email-card p{font-size:13px;color:var(--white-40);margin-bottom:1rem;line-height:1.6;font-weight:300}
+.score-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+.score-chip{background:var(--white-05);border:1px solid var(--border2);border-radius:6px;padding:10px;text-align:center}
+.chip-label{font-size:9px;color:var(--white-40);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px}
+.chip-val{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700}
+.chip-green{border-color:rgba(93,202,165,0.2);background:rgba(93,202,165,0.05)}.chip-green .chip-val{color:var(--teal)}
+.chip-amber{border-color:rgba(239,159,39,0.2);background:var(--amber-dim)}.chip-amber .chip-val{color:var(--amber)}
+.chip-red{border-color:rgba(240,149,149,0.2);background:var(--red-dim)}.chip-red .chip-val{color:var(--red)}
 .email-input-row{display:flex;gap:8px}
-.email-input-row input{flex:1;padding:10px 14px;border:1px solid #ccc;border-radius:8px;font-size:14px;background:#f8f7f4;color:#1a1a1a}
-.email-input-row input:focus{outline:none;border-color:#185FA5}
-.privacy-note{font-size:12px;color:#888;margin-top:8px}
-.error-msg{background:#FCEBEB;color:#A32D2D;border-radius:8px;padding:10px 14px;font-size:13px;margin-top:10px}
+.email-input-row input{flex:1;padding:10px 12px;border:1px solid var(--border2);border-radius:4px;font-size:13px;background:var(--white-05);color:var(--white);font-family:'DM Sans',sans-serif}
+.email-input-row input:focus{outline:none;border-color:var(--teal)}
+.email-input-row input::placeholder{color:var(--white-40)}
+.privacy-note{font-size:11px;color:var(--white-40);margin-top:8px}
+.error-msg{background:var(--red-dim);border:1px solid rgba(240,149,149,0.2);border-radius:4px;padding:8px 12px;font-size:12px;color:var(--red);margin-top:8px}
+
+/* LOADING */
 .loading-wrap{padding:3rem 0;text-align:center}
-.spinner{width:36px;height:36px;border:2px solid #e8e6e0;border-top-color:#185FA5;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem}
+.spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-msg{font-size:14px;color:#666}
-.report-section{margin-bottom:1.5rem}
+.loading-msg{font-size:13px;color:var(--white-40);font-weight:300}
+
+/* REPORT */
+.report-header{margin-bottom:1.25rem}
+.report-header h2{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+.report-header p{font-size:12px;color:var(--white-40)}
+.report-section{margin-bottom:1.25rem}
 .report-section-header{display:flex;align-items:center;gap:10px;margin-bottom:0.75rem}
-.rs-title{font-size:15px;font-weight:600}
-.risk-badge{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px}
-.risk-laag{background:#EAF3DE;color:#3B6D11}
-.risk-middel{background:#FAEEDA;color:#854F0B}
-.risk-hoog{background:#FCEBEB;color:#A32D2D}
-.report-card{background:#fff;border:1px solid #e8e6e0;border-radius:12px;padding:1.25rem}
-.report-card p{font-size:14px;color:#444;line-height:1.7;margin-bottom:0.75rem}
-.report-card ul{padding-left:1.25rem}
-.report-card ul li{font-size:14px;color:#444;line-height:1.7;margin-bottom:4px}
-.cta-card{background:#E6F1FB;border:1px solid #B5D4F4;border-radius:12px;padding:1.25rem;margin-top:1.5rem}
-.cta-card h3{font-size:15px;font-weight:600;color:#0C447C;margin-bottom:6px}
-.cta-card p{font-size:13px;color:#185FA5;margin-bottom:0.75rem}
+.rs-title{font-size:14px;font-weight:500;color:var(--white)}
+.risk-badge{display:inline-block;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;letter-spacing:0.04em}
+.risk-laag{background:rgba(93,202,165,0.1);color:var(--teal)}
+.risk-middel{background:var(--amber-dim);color:var(--amber)}
+.risk-hoog{background:var(--red-dim);color:var(--red)}
+.report-card{background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:1.25rem;border-left:2px solid}
+.report-card-g{border-left-color:var(--teal)}
+.report-card-a{border-left-color:var(--amber)}
+.report-card-r{border-left-color:var(--red)}
+.report-card p{font-size:13px;color:var(--white-40);line-height:1.7;margin-bottom:0.75rem;font-weight:300}
+.report-card ul{padding-left:1.1rem}
+.report-card ul li{font-size:13px;color:var(--white-40);line-height:1.7;margin-bottom:4px}
+.report-card ul li::marker{color:var(--teal)}
+
+/* CTA */
+.cta-card{background:var(--teal-dim);border:1px solid var(--teal-border);border-radius:8px;padding:1.25rem;margin-top:1.5rem}
+.cta-card h3{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px}
+.cta-card p{font-size:12px;color:rgba(93,202,165,0.6);margin-bottom:0.75rem}
 .cta-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.cta-tier{background:#fff;border:1px solid #e8e6e0;border-radius:8px;padding:10px 12px}
-.tier-name{font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:2px}
-.tier-price{font-size:17px;font-weight:700;color:#185FA5}
-.tier-desc{font-size:11px;color:#888;margin-top:4px;line-height:1.5}
-.disclaimer{font-size:11px;color:#999;margin-top:1.5rem;border-top:1px solid #e8e6e0;padding-top:1rem;line-height:1.6}
-.report-header{margin-bottom:1.5rem}
-.report-header h2{font-size:20px;font-weight:600;margin-bottom:4px}
-.report-header p{font-size:14px;color:#666}
+.cta-tier{background:var(--bg);border:1px solid var(--border2);border-radius:6px;padding:10px}
+.tier-name{font-size:10px;font-weight:500;color:var(--white-40);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:2px}
+.tier-price{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--teal)}
+.tier-desc{font-size:10px;color:var(--white-40);margin-top:3px;line-height:1.4}
+
+/* DISCLAIMER */
+.disclaimer{font-size:10px;color:var(--white-40);margin-top:1.5rem;border-top:1px solid var(--border2);padding-top:1rem;line-height:1.6;font-weight:300}
 </style>
 </head>
 <body>
-<div id="app"><div id="screen"></div></div>
+<div id="app">
+  <nav class="scan-nav">
+    <div style="display:flex;align-items:center;gap:10px">
+      <svg width="24" height="24" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="24,2 42,12 42,36 24,46 6,36 6,12" fill="rgba(8,12,16,0.9)" stroke="rgba(93,202,165,0.45)" stroke-width="1.5"/>
+        <polygon points="24,7 37,14 37,34 24,41 11,34 11,14" fill="none" stroke="rgba(93,202,165,0.12)" stroke-width="0.5"/>
+        <line x1="24" y1="11" x2="24" y2="37" stroke="#5DCAA5" stroke-width="2"/>
+        <line x1="13" y1="18" x2="35" y2="18" stroke="#5DCAA5" stroke-width="2"/>
+        <line x1="13" y1="18" x2="11" y2="26" stroke="rgba(93,202,165,0.4)" stroke-width="1.2"/>
+        <line x1="13" y1="18" x2="19" y2="26" stroke="rgba(93,202,165,0.4)" stroke-width="1.2"/>
+        <path d="M9,26 Q15,31 21,26" fill="none" stroke="#5DCAA5" stroke-width="2"/>
+        <line x1="35" y1="18" x2="29" y2="26" stroke="rgba(93,202,165,0.4)" stroke-width="1.2"/>
+        <line x1="35" y1="18" x2="37" y2="26" stroke="rgba(93,202,165,0.4)" stroke-width="1.2"/>
+        <path d="M27,26 Q33,31 39,26" fill="none" stroke="#5DCAA5" stroke-width="2"/>
+        <line x1="19" y1="37" x2="29" y2="37" stroke="#5DCAA5" stroke-width="2"/>
+        <circle cx="24" cy="11" r="1.5" fill="#5DCAA5"/>
+      </svg>
+      <div>
+        <div style="font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#e8f4ff;letter-spacing:0.1em;text-transform:uppercase;line-height:1">AD<span style="color:#5DCAA5">ACTUS</span></div>
+        <div style="font-size:7px;color:rgba(93,202,165,0.35);letter-spacing:0.1em;text-transform:uppercase;margin-top:1px">Europese AI compliance. Vastgelegd.</div>
+      </div>
+    </div>
+    <div class="scan-nav-status">
+      <div class="nav-pulse"></div>
+      Wetgeving bijgewerkt · 2026
+    </div>
+  </nav>
+  <div id="screen"></div>
+</div>
 <script>
 const QUESTIONS=[
   {id:'sector',block:1,blockName:'Jouw bedrijf',text:'In welke sector is jouw bedrijf actief?',type:'single',options:['Retail','Horeca','Bouw','Zorg','HR & Recruitment','Financiën & Verzekeringen','Transport & Logistiek','IT & Technologie','Juridisch & Advies','Overheid','Onderwijs','Andere']},
@@ -130,9 +192,29 @@ function renderQ(){
   const s=sel(q);
   return`
     ${S.step===0?`<div style="margin-bottom:2rem">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">
+        <svg width="32" height="32" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <polygon points="24,2 42,12 42,36 24,46 6,36 6,12" fill="#0d1520" stroke="#5DCAA5" stroke-width="1.5"/>
+          <polygon points="24,7 37,14 37,34 24,41 11,34 11,14" fill="none" stroke="rgba(93,202,165,0.2)" stroke-width="0.5"/>
+          <line x1="24" y1="11" x2="24" y2="37" stroke="#5DCAA5" stroke-width="2"/>
+          <line x1="13" y1="18" x2="35" y2="18" stroke="#5DCAA5" stroke-width="2"/>
+          <line x1="13" y1="18" x2="11" y2="26" stroke="rgba(93,202,165,0.5)" stroke-width="1.2"/>
+          <line x1="13" y1="18" x2="19" y2="26" stroke="rgba(93,202,165,0.5)" stroke-width="1.2"/>
+          <path d="M9,26 Q15,31 21,26" fill="none" stroke="#5DCAA5" stroke-width="2"/>
+          <line x1="35" y1="18" x2="29" y2="26" stroke="rgba(93,202,165,0.5)" stroke-width="1.2"/>
+          <line x1="35" y1="18" x2="37" y2="26" stroke="rgba(93,202,165,0.5)" stroke-width="1.2"/>
+          <path d="M27,26 Q33,31 39,26" fill="none" stroke="#5DCAA5" stroke-width="2"/>
+          <line x1="19" y1="37" x2="29" y2="37" stroke="#5DCAA5" stroke-width="2"/>
+          <circle cx="24" cy="11" r="2" fill="#5DCAA5"/>
+        </svg>
+        <div>
+          <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#e8f4ff;line-height:1">AD<span style="color:#5DCAA5">ACTUS</span></div>
+          <div style="font-size:8px;color:#5DCAA5;letter-spacing:0.1em;text-transform:uppercase;margin-top:1px">Europese AI compliance. Vastgelegd.</div>
+        </div>
+      </div>
       <div class="scan-badge">✦ gratis scan</div>
       <h1 class="scan-title">AI Compliance Scan</h1>
-      <p class="scan-sub">Controleer in 2 minuten of jouw bedrijf voldoet aan de EU AI Act, GDPR en NIS2 — voor de deadline van augustus 2026.</p>
+      <p class="scan-sub">Uw bedrijf. Uw sector. Uw compliance risico — in 2 minuten in kaart gebracht.</p>
     </div>`:''}
     <div class="progress-wrap">
       <div class="progress-bar-bg"><div class="progress-bar" style="width:${prog}%"></div></div>
@@ -202,17 +284,19 @@ function renderReport(){
       <div class="score-chip ${chipClass(sc.gdpr)}"><div class="chip-label">GDPR</div><div class="chip-val">${riskLabel(sc.gdpr)}</div></div>
       <div class="score-chip ${chipClass(sc.nis2)}"><div class="chip-label">NIS2</div><div class="chip-val">${riskLabel(sc.nis2)}</div></div>
     </div>
-    ${sections.map(s=>`
+    ${sections.map(s=>{
+      const cardClass=sc[s.key]==='laag'?'report-card-g':sc[s.key]==='middel'?'report-card-a':'report-card-r';
+      return`
       <div class="report-section">
         <div class="report-section-header">
           <span class="rs-title">${s.title}</span>
           <span class="risk-badge ${riskClass(sc[s.key])}">${riskLabel(sc[s.key])}</span>
         </div>
-        <div class="report-card">
+        <div class="report-card ${cardClass}">
           <p>${s.data?.summary||''}</p>
           ${s.data?.actions?.length?`<ul>${s.data.actions.map(a=>`<li>${a}</li>`).join('')}</ul>`:''}
         </div>
-      </div>`).join('')}
+      </div>`}).join('')}
     <div class="cta-card">
       <h3>Wil je dieper gaan?</h3>
       <p>Kies een pakket voor een uitgebreidere analyse en persoonlijke begeleiding.</p>
